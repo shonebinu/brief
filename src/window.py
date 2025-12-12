@@ -182,6 +182,6 @@ class BriefWindow(Adw.ApplicationWindow):
             self.navigation_page.set_title(item.name)
             self.content_stack.set_visible_child_name("content")
             self.command_view.display_content(
-                raw_text, self.manager.settings.get_strv("format")
+                raw_text, self.manager.settings.get_string("format")
             )
             self.split_view.set_show_content(True)
