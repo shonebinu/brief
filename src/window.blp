@@ -15,50 +15,6 @@ template $BriefWindow: Adw.ApplicationWindow {
   }
 
   content: Adw.NavigationSplitView split_view {
-    sidebar: Adw.NavigationPage {
-      title: _("Brief");
-      tag: "sidebar";
-
-      Adw.ToolbarView {
-        [top]
-        Adw.HeaderBar {
-          [end]
-          MenuButton {
-            primary: true;
-            icon-name: "open-menu-symbolic";
-            menu-model: primary_menu;
-          }
-        }
-
-        content: Box {
-          orientation: vertical;
-          width-request: 325;
-
-          SearchEntry search_entry {
-            placeholder-text: _("Search commands...");
-            margin-bottom: 6;
-            margin-start: 6;
-            margin-end: 6;
-          }
-
-          ScrolledWindow {
-            vexpand: true;
-            hscrollbar-policy: never;
-
-            ListView results_list_view {
-              styles [
-                "navigation-sidebar",
-              ]
-
-              single-click-activate: true;
-
-              factory: SignalListItemFactory item_factory {};
-            }
-          }
-        };
-      }
-    };
-
     content: Adw.NavigationPage navigation_page {
       title: _("Welcome");
       tag: "content";
@@ -83,23 +39,4 @@ template $BriefWindow: Adw.ApplicationWindow {
       }
     };
   };
-}
-
-menu primary_menu {
-  section {
-    item {
-      label: _("_Preferences");
-      action: "app.preferences";
-    }
-
-    item {
-      label: _("_Keyboard Shortcuts");
-      action: "app.shortcuts";
-    }
-
-    item {
-      label: _("_About Brief");
-      action: "app.about";
-    }
-  }
 }

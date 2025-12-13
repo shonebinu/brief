@@ -8,6 +8,7 @@ blueprints = custom_target('blueprints',
     'renderer.blp',
     'shortcuts-dialog.blp',
     'window.blp',
+    'sidebar.blp',
   ),
   output: '.',
   command: [find_program('blueprint-compiler'), 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
@@ -45,6 +46,7 @@ brief_sources = [
   'tldr.py',
   'renderer.py',
   'preferences.py',
+  'sidebar.py',
 ]
 
 install_data(brief_sources, install_dir: moduledir)

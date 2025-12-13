@@ -4,7 +4,6 @@ A description of this project.
 
 ## TODO
 
-- separate list from window...
 - check to see if changing preferences change the list, change long | short instantly
 - update cache btn (in menu)
 - first command seem selected on startup...
