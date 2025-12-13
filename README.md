@@ -6,11 +6,11 @@ A description of this project.
 
 - common platform in preferences shuld hav label... common across many
 - how to get widget completions in vscode??? tooling
-- long | short cmd arg option
+- long | short cmd arg option -- add color to args
 - check to see if changing preferences change the list, change long | short instantly
 - update cache btn (in menu)
 - first command seem selected on startup...
-- upon search , list scrollbar should reset
+- upon search , list scrollbar should reset or not???
 - credit tldr
 - do something abt the shortcuts thing and about in menu
 - add color to args of commands or not

@@ -85,9 +85,21 @@ class CommandPage(Adw.Bin):
 
         scrolled = Gtk.ScrolledWindow(hexpand=True)
 
+        def format_command(text, fmt):
+            def replace(match):
+                content = match.group(1)
+
+                if content.startswith("[") and "|" in content:
+                    parts = content[1:-1].split("|")
+                    return parts[1] if fmt == "long" else parts[0]
+
+                return content.replace("[", "").replace("]", "")
+
+            return re.sub(r"\{\{(.*?)\}\}", replace, text)
+
         scrolled.set_child(
             Gtk.Label(
-                label=code_text,
+                label=format_command(code_text, cmd_arg_format),
                 xalign=0,
                 selectable=True,
                 wrap=False,
