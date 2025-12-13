@@ -19,7 +19,7 @@ template $BriefWindow: Adw.ApplicationWindow {
       title: _("Brief");
       tag: "sidebar";
 
-      child: Adw.ToolbarView {
+      Adw.ToolbarView {
         [top]
         Adw.HeaderBar {
           [end]
@@ -52,14 +52,14 @@ template $BriefWindow: Adw.ApplicationWindow {
             }
           }
         };
-      };
+      }
     };
 
     content: Adw.NavigationPage navigation_page {
       title: _("Welcome");
       tag: "content";
 
-      child: Adw.ToolbarView {
+      Adw.ToolbarView {
         [top]
         Adw.HeaderBar {}
 
@@ -76,7 +76,7 @@ template $BriefWindow: Adw.ApplicationWindow {
             ]
           }
         };
-      };
+      }
     };
   };
 }
