@@ -1,16 +1,9 @@
 # Brief
 
-A description of this project.
+Brief is a GTK app for [tldr-pages](https://github.com/tldr-pages/tldr). It lets you view community maintained help pages for command-line tools.
 
 ## TODO
 
-CHORE stuff
-
-- divider in menu
-- ctrl f for search and enter for selecting 1st
-- setup about and shortcuts in menu (legal stuff) (credit tldr)
-- update cache btn (in menu)
-
-- icon https://blogs.gnome.org/tbernard/2019/12/30/designing-an-icon-for-your-app/ terminal-icon https://developer.gnome.org/hig/guidelines/app-icons.html https://github.com/somepaulo/MoreWaita https://gitlab.gnome.org/Teams/Design/app-icon-requests#designing-yourself
-
-- integrate w/ gnome search possible??? https://developer.gnome.org/documentation/tutorials/search-provider.html
+- Ctrl + F shortcut to focus on search input
+- Update cache option that fetches the latest tldr pages and caches it.
+- Integrate with GNOME Search . feasible? -> https://developer.gnome.org/documentation/tutorials/search-provider.html
