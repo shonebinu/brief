@@ -2,13 +2,14 @@ import sys
 
 import gi
 
+from .preferences import BriefPreferencesWindow
+from .window import BriefWindow
+from .tldr import PageManager
+
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 
 from gi.repository import Adw, Gio
-
-from .preferences import BriefPreferencesWindow
-from .window import BriefWindow
 
 
 class BriefApplication(Adw.Application):
@@ -22,6 +23,8 @@ class BriefApplication(Adw.Application):
         self.create_action("about", self.on_about_action)
         self.create_action("preferences", self.on_preferences_action)
         self.create_action("update_cache", self.on_update_cache_action)
+
+        self.manager = PageManager()
 
     def do_activate(self):
         win = self.props.active_window
@@ -45,7 +48,8 @@ class BriefApplication(Adw.Application):
         pref_window.present(self.props.active_window)
 
     def on_update_cache_action(self, *args):
-        print("update")
+        # instead bring up a modal
+        self.manager.update_cache()
 
     def create_action(self, name, callback, shortcuts=None):
         action = Gio.SimpleAction.new(name, None)

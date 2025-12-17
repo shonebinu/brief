@@ -1,4 +1,5 @@
 import os
+from collections import defaultdict
 
 import langcodes
 from gi.repository import Gio
@@ -17,11 +18,11 @@ class PageManager:
         languages = []
 
         if os.path.exists(self.system_path):
-            for folder in os.listdir(self.system_path):
-                if folder.startswith("pages."):  # pages.en is symlink to pages
-                    code = folder.split(".")[1]
-                    name = langcodes.get(code).display_name()
-                    languages.append((name, code))
+            with os.scandir(self.system_path) as it:
+                for entry in it:
+                    if entry.name.startswith("pages.") and entry.is_dir():
+                        code = entry.name.split(".")[1]
+                        languages.append((langcodes.get(code).autonym().title(), code))
 
         return sorted(languages, key=lambda x: x[0])
 
@@ -44,38 +45,39 @@ class PageManager:
         }
 
         if os.path.exists(default_pages):
-            for folder in os.listdir(default_pages):
-                folder_path = os.path.join(default_pages, folder)
-                if os.path.isdir(folder_path):
-                    code = folder
+            with os.scandir(default_pages) as it:
+                for entry in it:
+                    if entry.is_dir():
+                        code = entry.name
 
-                    if code in pretty_names:
-                        name = pretty_names[code]
-                    else:
-                        name = code.replace("-", " ").title()
+                        if code in pretty_names:
+                            name = pretty_names[code]
+                        else:
+                            name = code.replace("-", " ").title()
 
-                    platforms.append((name, code))
+                        platforms.append((name, code))
 
         return sorted(platforms, key=lambda x: x[0])
 
     def get_all_commands(self):
-        commands = {}
-        langs = self.settings.get_strv("languages")
-        plats = self.settings.get_strv("platforms")
+        commands = defaultdict(lambda: defaultdict(list))
+        enabled_langs = self.settings.get_strv("languages")
+        enabled_plats = self.settings.get_strv("platforms")
 
-        for lang in langs:
-            commands[lang] = {}
-            for plat in plats:
+        for lang in enabled_langs:
+            for plat in enabled_plats:
                 path = os.path.join(self.system_path, f"pages.{lang}", plat)
                 try:
                     with os.scandir(path) as it:
-                        commands[lang][plat] = [
+                        entries = [
                             entry.name[:-3]
                             for entry in it
                             if entry.name.endswith(".md") and entry.is_file()
                         ]
+                        if entries:
+                            commands[lang][plat] = entries
                 except FileNotFoundError:
-                    pass
+                    continue
 
         return commands
 
@@ -91,4 +93,5 @@ class PageManager:
         return f"Command '{command}' not found in path '{filepath}'."
 
     def update_cache(self):
+        print("updating")
         return

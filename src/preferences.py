@@ -1,10 +1,10 @@
 import gi
+from .tldr import PageManager
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw, Gio, Gtk
 
-from .tldr import PageManager
+from gi.repository import Adw, Gio, Gtk
 
 
 @Gtk.Template(resource_path="/io/github/shonebinu/Brief/preferences.ui")
