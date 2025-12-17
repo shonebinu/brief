@@ -1,10 +1,11 @@
-import gi
 import re
+
+import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 
-from gi.repository import Gtk, Adw, Gdk
+from gi.repository import Adw, Gdk, Gtk
 
 
 @Gtk.Template(resource_path="/io/github/shonebinu/Brief/renderer.ui")

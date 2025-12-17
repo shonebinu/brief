@@ -1,9 +1,14 @@
 import os
+
 import langcodes
 from gi.repository import Gio
 
 
 class PageManager:
+    TLDR_PAGES_ZIP_URL = (
+        "https://github.com/tldr-pages/tldr/archive/refs/heads/main.zip"
+    )
+
     def __init__(self):
         self.system_path = "/app/share/tldr-data/"
         self.settings = Gio.Settings.new("io.github.shonebinu.Brief")
@@ -55,22 +60,22 @@ class PageManager:
 
     def get_all_commands(self):
         commands = {}
+        langs = self.settings.get_strv("languages")
+        plats = self.settings.get_strv("platforms")
 
-        enabled_langs = self.settings.get_strv("languages")
-        enabled_plats = self.settings.get_strv("platforms")
-
-        for lang_code in enabled_langs:
-            lang_folder = f"pages.{lang_code}"
-            commands[lang_code] = {}
-
-            for platform in enabled_plats:
-                folder_path = os.path.join(self.system_path, lang_folder, platform)
-                commands[lang_code][platform] = []
-
-                if os.path.exists(folder_path):
-                    for filename in os.listdir(folder_path):
-                        if filename.endswith(".md"):
-                            commands[lang_code][platform].append(filename[:-3])
+        for lang in langs:
+            commands[lang] = {}
+            for plat in plats:
+                path = os.path.join(self.system_path, f"pages.{lang}", plat)
+                try:
+                    with os.scandir(path) as it:
+                        commands[lang][plat] = [
+                            entry.name[:-3]
+                            for entry in it
+                            if entry.name.endswith(".md") and entry.is_file()
+                        ]
+                except FileNotFoundError:
+                    pass
 
         return commands
 
@@ -84,3 +89,6 @@ class PageManager:
                 return f.read()
 
         return f"Command '{command}' not found in path '{filepath}'."
+
+    def update_cache(self):
+        return

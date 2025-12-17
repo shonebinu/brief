@@ -48,6 +48,11 @@ template $BriefSidebar: Adw.NavigationPage {
 menu primary_menu {
   section {
     item {
+      label: _("_Update Cache");
+      action: "app.update_cache";
+    }
+
+    item {
       label: _("_Preferences");
       action: "app.preferences";
     }

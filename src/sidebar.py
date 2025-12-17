@@ -3,7 +3,7 @@ import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 
-from gi.repository import Adw, Gtk, Gio, Pango, GObject
+from gi.repository import Adw, Gio, GObject, Gtk, Pango
 
 
 class CommandItem(GObject.Object):
@@ -17,7 +17,6 @@ class CommandItem(GObject.Object):
 
 
 class CommandListRow(Gtk.Box):
-
     def __init__(self):
         super().__init__(
             orientation=Gtk.Orientation.HORIZONTAL,
