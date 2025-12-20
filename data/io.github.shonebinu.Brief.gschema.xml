@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="brief">
 	<schema id="io.github.shonebinu.Brief" path="/io/github/shonebinu/Brief/">
-		<key name="platforms" type="as">
-			<default>['common', 'linux']</default>
-			<summary>Active Platforms</summary>
-			<description>List of enabled operating systems.</description>
+
+		<key name="format" type="s">
+			<default>'long'</default>
+			<summary>Command Format</summary>
+			<description>Long or short command arguments.</description>
 		</key>
 
 		<key name="languages" type="as">
@@ -13,10 +14,11 @@
 			<description>List of enabled language codes.</description>
 		</key>
 
-		<key name="format" type="s">
-			<default>'long'</default>
-			<summary>Command Format</summary>
-			<description>Long or short command arguments.</description>
+		<key name="platforms" type="as">
+			<default>['common', 'linux']</default>
+			<summary>Active Platforms</summary>
+			<description>List of enabled operating systems.</description>
 		</key>
+
 	</schema>
 </schemalist>

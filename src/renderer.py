@@ -79,29 +79,17 @@ class CommandPage(Adw.Bin):
 
             elif line.startswith("`") and line.endswith("`"):
                 self.content_box.append(
-                    self._create_code_block(line[1:-1], cmd_arg_format)
+                    self.create_code_block(line[1:-1], cmd_arg_format)
                 )
 
-    def _create_code_block(self, code_text, cmd_arg_format):
+    def create_code_block(self, code_text, cmd_arg_format):
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, css_classes=["card"])
 
         scrolled = Gtk.ScrolledWindow(hexpand=True)
 
-        def format_command(text, fmt):
-            def replace(match):
-                content = match.group(1)
-
-                if content.startswith("[") and "|" in content:
-                    parts = content[1:-1].split("|")
-                    return parts[1] if fmt == "long" else parts[0]
-
-                return content
-
-            return re.sub(r"\{\{(.*?)\}\}", replace, text)
-
         scrolled.set_child(
             Gtk.Label(
-                label=format_command(code_text, cmd_arg_format),
+                label=self.format_command(code_text, cmd_arg_format),
                 xalign=0,
                 selectable=True,
                 wrap=False,
@@ -121,17 +109,47 @@ class CommandPage(Adw.Bin):
             margin_end=6,
         )
 
-        btn.connect("clicked", lambda b: self._copy_to_clipboard(code_text))
+        btn.connect("clicked", lambda b: self.copy_to_clipboard(code_text))
 
         box.append(scrolled)
         box.append(btn)
 
         return box
 
-    def _copy_to_clipboard(self, text):
+    def copy_to_clipboard(self, text):
         clipboard = Gdk.Display.get_default().get_clipboard()
         clipboard.set(text)
 
         toast = Adw.Toast.new("Copied to clipboard")
         toast.set_timeout(2)
         self.toast_overlay.add_toast(toast)
+
+    def format_command(text, fmt):
+        # https://github.com/tldr-pages/tldr/blob/v2.3/CLIENT-SPECIFICATION.md#page-structure
+        pattern = r"\\\{\\\{|\\\}\\\}|\{\{(.*?)\}\}"
+
+        def replace(match):
+            full_match = match.group(0)
+
+            if full_match == r"\{\{":
+                return "{{"
+            if full_match == r"\}\}":
+                return "}}"
+
+            content = match.group(1)
+
+            if content.startswith("[") and content.endswith("]") and "|" in content:
+                options = content[1:-1].split("|", 1)
+                short_form = options[0]
+                long_form = options[1] if len(options) > 1 else ""
+
+                if fmt == "short":
+                    return short_form
+                elif fmt == "long":
+                    return long_form
+                else:
+                    return content
+
+            return content
+
+        return re.sub(pattern, replace, text)

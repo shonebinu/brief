@@ -21,18 +21,19 @@ class BriefPreferencesWindow(Adw.PreferencesDialog):
         self.settings = Gio.Settings.new("io.github.shonebinu.Brief")
         self.manager = PageManager()
 
-        self.setup_expander(
-            self.platform_group, "platforms", self.manager.get_available_platforms()
-        )
-        self.setup_expander(
-            self.language_group, "languages", self.manager.get_available_languages()
-        )
-
         self.setup_combo(
             self.format_row,
             "format",
             names=["Long Arguments (--all)", "Short Arguments (-a)"],
             codes=["long", "short"],
+        )
+
+        self.setup_expander(
+            self.language_group, "languages", self.manager.get_available_languages()
+        )
+
+        self.setup_expander(
+            self.platform_group, "platforms", self.manager.get_available_platforms()
         )
 
     def setup_expander(self, expander_row, key, items):

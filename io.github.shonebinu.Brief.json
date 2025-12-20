@@ -57,20 +57,23 @@
       ]
     },
     {
-      "name": "tldr-data",
+      "name": "tldr",
       "buildsystem": "simple",
       "build-commands": [
-        "mkdir -p ${FLATPAK_DEST}/share/tldr-data/",
+        "mkdir -p ${FLATPAK_DEST}/share/tldr/",
         "rm pages.en",
         "mv pages pages.en",
-        "cp -r pages.* ${FLATPAK_DEST}/share/tldr-data/"
+        "python3 generate_commands_index.py",
+        "cp -r pages.* ${FLATPAK_DEST}/share/tldr/",
+        "cp commands.json ${FLATPAK_DEST}/share/tldr/"
       ],
       "sources": [
         {
           "type": "git",
           "url": "https://github.com/tldr-pages/tldr.git",
           "branch": "main"
-        }
+        },
+        { "type": "file", "path": "./generate_commands_index.py" }
       ]
     },
     {

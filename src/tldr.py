@@ -1,9 +1,10 @@
-from collections import defaultdict
-import langcodes
-import gi
+import json
 import shutil
-from pathlib import Path
 import threading
+from collections import defaultdict
+from pathlib import Path
+import gi
+import langcodes
 
 gi.require_version("Soup", "3.0")
 from gi.repository import Gio, GLib, Soup
@@ -15,14 +16,12 @@ class PageManager:
     )
 
     def __init__(self):
-        # /app is read-only at runtime. TLDR pages are bundled here at flatpak build time and should be used as a fallback if no cached pages exist
+        # /app is read-only at runtime.
         # ${FLATPAK_DEST} in flatpak manifest resolves to /app
-        self.system_data_dir = Path("/app/share/tldr-data/")
+        self.system_data_dir = Path("/app/share/tldr/")
         self.cache_dir = Path(GLib.get_user_cache_dir()) / "brief"
-        self.local_data_dir = self.cache_dir / "tldr-data"
+        self.local_data_dir = self.cache_dir / "tldr"
         self.zip_path = self.cache_dir / "tldr.zip"
-
-        self.cache_dir.mkdir(parents=True, exist_ok=True)
 
         self.settings = Gio.Settings.new("io.github.shonebinu.Brief")
         self.session = Soup.Session.new()
@@ -34,22 +33,20 @@ class PageManager:
             else self.system_data_dir
         )
 
-    def get_available_languages(self):
-        languages = []
-        path = self._get_data_dir()
+    def get_commands_map(self):
+        return json.loads(
+            (self._get_data_dir() / "commands.json").read_text(encoding="utf-8")
+        )
 
-        if path.exists():
-            for entry in path.iterdir():
-                if entry.name.startswith("pages.") and entry.is_dir():
-                    code = entry.name.split(".")[1]
-                    languages.append((langcodes.get(code).autonym().title(), code))
+    def get_available_languages(self):
+        languages = [
+            (langcodes.get(lang).autonym().title(), lang)
+            for lang in self.get_commands_map()
+        ]
 
         return sorted(languages, key=lambda x: x[0])
 
     def get_available_platforms(self):
-        platforms = []
-        default_pages = self._get_data_dir() / "pages.en"
-
         pretty_names = {
             "osx": "macOS",
             "sunos": "SunOS",
@@ -64,12 +61,10 @@ class PageManager:
             "common": "Common",
         }
 
-        if default_pages.exists():
-            for entry in default_pages.iterdir():
-                if entry.is_dir():
-                    code = entry.name
-                    name = pretty_names.get(code, code.replace("-", " ").title())
-                    platforms.append((name, code))
+        platforms = [
+            (pretty_names.get(plat, plat.replace("-", " ").title()), plat)
+            for plat in self.get_commands_map().get("en", {})
+        ]
 
         return sorted(platforms, key=lambda x: x[0])
 
@@ -77,22 +72,15 @@ class PageManager:
         commands = defaultdict(lambda: defaultdict(list))
         enabled_langs = self.settings.get_strv("languages")
         enabled_plats = self.settings.get_strv("platforms")
-        base_path = self._get_data_dir()
+
+        all_commands = self.get_commands_map()
 
         for lang in enabled_langs:
             for plat in enabled_plats:
-                path = base_path / f"pages.{lang}" / plat
-                if not path.exists():
-                    continue
-                entries = [
-                    entry.name[:-3]
-                    for entry in path.iterdir()
-                    if entry.suffix == ".md" and entry.is_file()
-                ]
-                if entries:
-                    commands[lang][plat] = entries
+                if plat in all_commands.get(lang, {}):
+                    commands[lang][plat] = all_commands[lang][plat]
 
-        return commands
+        return dict(commands)
 
     def get_page(self, lang_code, platform, command):
         filepath = (
@@ -110,6 +98,7 @@ class PageManager:
         self.downloaded = 0
 
         self.msg = Soup.Message.new("GET", self.TLDR_PAGES_ZIP_URL)
+
         self.msg.connect("got-body-data", self._on_got_body_data)
 
         self.session.send_async(
@@ -175,6 +164,8 @@ class PageManager:
             GLib.idle_add(self.finished_cb, False, str(e))
 
     def process_zip(self):
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
+
         extract_temp = Path(self.cache_dir) / "temp_extract"
         shutil.rmtree(extract_temp, ignore_errors=True)
 
@@ -183,20 +174,34 @@ class PageManager:
         content_root = next(extract_temp.iterdir())
         content_root = Path(content_root)
 
-        pages_en = content_root / "pages.en"
-        pages = content_root / "pages"
-
+        pages_en, pages = content_root / "pages.en", content_root / "pages"
         if pages_en.exists():
             pages_en.unlink()
         if pages.exists():
             pages.rename(pages_en)
 
+        commands = defaultdict(lambda: defaultdict(list))
+
         for entry in content_root.iterdir():
-            if not entry.name.startswith("pages."):
+            if entry.is_dir() and entry.name.startswith("pages."):
+                lang = entry.name.split(".", 1)[1]
+
+                for platform_dir in entry.iterdir():
+                    if platform_dir.is_dir():
+                        platform = platform_dir.name
+
+                        for md_file in platform_dir.glob("*.md"):
+                            command = md_file.stem
+                            commands[lang][platform].append(command)
+            else:
                 if entry.is_dir():
                     shutil.rmtree(entry)
                 else:
                     entry.unlink()
+
+        (content_root / "commands.json").write_text(
+            json.dumps(commands, indent=2), encoding="utf-8"
+        )
 
         shutil.rmtree(self.local_data_dir, ignore_errors=True)
         shutil.move(str(content_root), self.local_data_dir)
