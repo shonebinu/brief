@@ -92,6 +92,15 @@ class BriefSidebar(Adw.NavigationPage):
         self.search_entry.connect("search-changed", self.on_search_changed)
         self.results_list_view.connect("activate", self.on_list_item_activated)
 
+        shortcut_controller = Gtk.ShortcutController(scope=Gtk.ShortcutScope.MANAGED)
+        trigger = Gtk.ShortcutTrigger.parse_string("<Control>k")
+        action = Gtk.CallbackAction.new(
+            lambda *_: (self.search_entry.grab_focus(), True)[1]
+        )
+        shortcut = Gtk.Shortcut.new(trigger, action)
+        shortcut_controller.add_shortcut(shortcut)
+        self.add_controller(shortcut_controller)
+
         self.is_updating = False
         self.timeout_id = None
 
