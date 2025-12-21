@@ -172,18 +172,27 @@ class BriefSidebar(Adw.NavigationPage):
 
     def start_update_process(self):
         self.progress_revealer.set_reveal_child(True)
-        self.progress_bar.set_fraction(0)
         self.status_label.set_label("Preparing...")
 
+        def pulse():
+            self.progress_bar.pulse()
+            return True
+
+        self.timeout_id = GLib.timeout_add(100, pulse)
+
         self.manager.update_cache(
-            progress_cb=self._on_update_progress, finished_cb=self._on_update_finished
+            progress_cb=self.on_update_progress, finished_cb=self.on_update_finished
         )
 
-    def _on_update_progress(self, fraction, text):
+    def on_update_progress(self, fraction, text):
         self.status_label.set_label(text)
-        self.progress_bar.set_fraction(fraction)
+        if fraction >= 0:
+            if self.timeout_id:
+                GLib.source_remove(self.timeout_id)
+                self.timeout_id = None
+            self.progress_bar.set_fraction(fraction)
 
-    def _on_update_finished(self, success, message):
+    def on_update_finished(self, success, message):
         self.progress_revealer.set_reveal_child(False)
 
         toast = Adw.Toast.new(message)

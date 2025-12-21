@@ -24,16 +24,16 @@ class PageManager:
 
         self.settings = Gio.Settings.new("io.github.shonebinu.Brief")
 
-    def _get_data_dir(self):
+    def get_data_dir(self):
         return (
             self.local_data_dir
-            if self.local_data_dir.exists()
+            if (self.local_data_dir / "commands.json").exists()
             else self.system_data_dir
         )
 
     def get_commands_map(self):
         return json.loads(
-            (self._get_data_dir() / "commands.json").read_text(encoding="utf-8")
+            (self.get_data_dir() / "commands.json").read_text(encoding="utf-8")
         )
 
     def get_available_languages(self):
@@ -82,7 +82,7 @@ class PageManager:
 
     def get_page(self, lang_code, platform, command):
         filepath = (
-            self._get_data_dir() / f"pages.{lang_code}" / platform / f"{command}.md"
+            self.get_data_dir() / f"pages.{lang_code}" / platform / f"{command}.md"
         )
 
         if filepath.exists():
@@ -115,20 +115,27 @@ class PageManager:
     def download_tldr_zip(self):
         with requests.get(self.TLDR_PAGES_ZIP_URL, stream=True, timeout=15) as r:
             r.raise_for_status()
-            total_size = int(r.headers.get("content-length", 0))
-            chunk_size = 8192  # 8 KB
             downloaded = 0
+            total_size = int(r.headers.get("content-length", 0))
 
             with open(self.zip_path, "wb") as f:
-                for chunk in r.iter_content(chunk_size=chunk_size):
+                for chunk in r.iter_content(chunk_size=16384):  # 16 KB
                     if chunk:
                         f.write(chunk)
                         downloaded += len(chunk)
-                        fraction = downloaded / total_size if total_size else 0
+
+                        fraction = (downloaded / total_size) if total_size else -1
+
+                        label_text = (
+                            f"Downloading... {int(fraction * 100)}% ({(downloaded / 1024 / 1024):.1f}) MB"
+                            if total_size
+                            else f"Downloading... {(downloaded / 1024 / 1024):.1f} MB"
+                        )
+
                         GLib.idle_add(
                             self.progress_cb,
                             fraction,
-                            f"Downloading... {int(fraction * 100)}% ({(downloaded / 1024 / 1024):.1f}) MB",
+                            label_text,
                         )
 
     def process_tldr_zip(self):
@@ -141,10 +148,10 @@ class PageManager:
         content_root = Path(content_root)
 
         pages_en, pages = content_root / "pages.en", content_root / "pages"
-        if pages_en.exists():
+        if pages_en.exists() and pages_en.is_file():
             pages_en.unlink()
-        if pages.exists():
-            pages.rename(pages_en)
+            if pages.exists():
+                pages.rename(pages_en)
 
         commands = defaultdict(lambda: defaultdict(list))
 
