@@ -11,7 +11,7 @@ from gi.repository import Gio, GLib
 
 class PageManager:
     TLDR_PAGES_ZIP_URL = (
-        "https://github.com/tldr-pages/tldr/archive/refs/heads/main.zip"
+        "https://github.com/tldr-pages/tldr/releases/download/v2.3/tldr.zip"
     )
 
     def __init__(self):
@@ -99,7 +99,6 @@ class PageManager:
     def download_and_process_tldr_zip(self):
         try:
             self.cache_dir.mkdir(parents=True, exist_ok=True)
-            Path(self.zip_path).unlink(missing_ok=True)
 
             self.download_tldr_zip()
             GLib.idle_add(self.progress_cb, -1, "Extracting...")
@@ -132,6 +131,16 @@ class PageManager:
                             else f"Downloading... {(downloaded / 1024 / 1024):.1f} MB"
                         )
 
+                        if total_size > 0:
+                            fraction = downloaded / total_size
+                            percent = int(fraction * 100)
+                            label_text = f"Downloading... {percent}% ({downloaded / 1024 / 1024:.1f} MB)"
+                        else:
+                            fraction = -1.0
+                            label_text = (
+                                f"Downloading... {downloaded / 1024 / 1024:.1f} MB"
+                            )
+
                         GLib.idle_add(
                             self.progress_cb,
                             fraction,
@@ -139,23 +148,14 @@ class PageManager:
                         )
 
     def process_tldr_zip(self):
-        extract_temp = Path(self.cache_dir) / "temp_extract"
+        extract_temp = Path(self.cache_dir) / "tldr.tmp"
         shutil.rmtree(extract_temp, ignore_errors=True)
 
         shutil.unpack_archive(self.zip_path, extract_temp)
 
-        content_root = next(extract_temp.iterdir())
-        content_root = Path(content_root)
-
-        pages_en, pages = content_root / "pages.en", content_root / "pages"
-        if pages_en.exists() and pages_en.is_file():
-            pages_en.unlink()
-            if pages.exists():
-                pages.rename(pages_en)
-
         commands = defaultdict(lambda: defaultdict(list))
 
-        for entry in content_root.iterdir():
+        for entry in extract_temp.iterdir():
             if entry.is_dir() and entry.name.startswith("pages."):
                 lang = entry.name.split(".", 1)[1]
 
@@ -172,12 +172,12 @@ class PageManager:
                 else:
                     entry.unlink()
 
-        (content_root / "commands.json").write_text(
+        (extract_temp / "commands.json").write_text(
             json.dumps(commands, indent=2), encoding="utf-8"
         )
 
         shutil.rmtree(self.local_data_dir, ignore_errors=True)
-        shutil.move(str(content_root), self.local_data_dir)
+        shutil.move(extract_temp, self.local_data_dir)
 
+        self.zip_path.unlink()
         shutil.rmtree(extract_temp, ignore_errors=True)
-        Path(self.zip_path).unlink()
