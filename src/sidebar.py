@@ -9,6 +9,10 @@ from gi.repository import Adw, Gio, GObject, Gtk, Pango, GLib
 class CommandItem(GObject.Object):
     __gtype_name__ = "CommandItem"
 
+    name = GObject.Property(type=str)
+    platform = GObject.Property(type=str)
+    language = GObject.Property(type=str)
+
     def __init__(self, name, platform, language):
         super().__init__()
         self.name = name
@@ -83,6 +87,9 @@ class BriefSidebar(Adw.NavigationPage):
         self.search_entry.connect("search-changed", self.on_search_changed)
         self.search_entry.connect("activate", self.on_search_activate)
         self.results_list_view.connect("activate", self.on_list_item_activated)
+
+        self.is_updating = False
+        self.timeout_id = None
 
     def _on_factory_setup(self, _factory, list_item):
         list_item.set_child(CommandListRow())
@@ -171,6 +178,14 @@ class BriefSidebar(Adw.NavigationPage):
         return (rank(s1) - rank(s2)) or (s1 > s2) - (s1 < s2)
 
     def start_update_process(self):
+        if self.is_updating:
+            toast = Adw.Toast.new("An update process is already going on")
+            toast.set_timeout(3)
+            self.toast_overlay.add_toast(toast)
+            return
+
+        self.is_updating = True
+
         self.progress_revealer.set_reveal_child(True)
         self.status_label.set_label("Preparing...")
 
@@ -193,11 +208,18 @@ class BriefSidebar(Adw.NavigationPage):
             self.progress_bar.set_fraction(fraction)
 
     def on_update_finished(self, success, message):
+        if self.timeout_id:
+            GLib.source_remove(self.timeout_id)
+            self.timeout_id = None
+
         self.progress_revealer.set_reveal_child(False)
+        self.progress_bar.set_fraction(0.0)
 
         toast = Adw.Toast.new(message)
-        toast.set_timeout(2)
+        toast.set_timeout(3)
         self.toast_overlay.add_toast(toast)
 
         if success:
             self.refresh_data()
+
+        self.is_updating = False

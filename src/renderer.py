@@ -121,7 +121,7 @@ class CommandPage(Adw.Bin):
         clipboard.set(text)
 
         toast = Adw.Toast.new("Copied to clipboard")
-        toast.set_timeout(2)
+        toast.set_timeout(3)
         self.toast_overlay.add_toast(toast)
 
     def format_command(self, text, fmt):
