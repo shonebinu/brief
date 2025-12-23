@@ -1,13 +1,36 @@
+<div align=center>
+
+<img src="./data/icons/hicolor/scalable/apps/io.github.shonebinu.Brief.svg" alt="Brief Logo" width="128" >
+
 # Brief
 
-Brief is a GTK4 application for browsing [tldr-pages](https://github.com/tldr-pages/tldr). It provides a clean, native interface to view community-maintained help pages for command-line tools.
+**Browse command-line cheatsheets**
 
 ![Brief app screenshot](./data/screenshots/brief.png)
-![Brief app preferences screenshot](./data/screenshots/brief.png)
+
+</div>
+
+## Description
+
+Brief is an app for browsing command-line cheatsheets written in Python, using GTK4 and Libadwaita. The data source is [tldr-pages](https://github.com/tldr-pages/tldr). It lets you search through thousands of command-line tools across multiple platforms and languages, providing simplified help pages.
 
 ## Features
 
-- Built with GTK4 and Libadwaita for a seamless GNOME experience.
-- Works offline with cached pages.
+- Works completely offline.
 - Filter platform-specific commands (Linux, Windows, Android, etc.).
 - Browse commands in multiple languages.
+- Lets you update the cache within the app to download the latest data.
+
+## Install
+
+<a href='https://flathub.org/apps/io.github.shonebinu.Brief'>
+    <img width='240' alt='Get Brief on Flathub' src='https://flathub.org/api/badge?svg&locale=en '/>
+</a>
+
+## Development
+
+You can clone this project and run it using [Gnome Builder](https://apps.gnome.org/Builder/). The Python libraries used in this project are defined inside [requirements.txt](./requirements.txt), which you may install if you want editor completions.
+
+## Credits
+
+The entirety of the data used in this project is from [tldr-pages](https://github.com/tldr-pages/tldr) and without their valuable work, this project wouldn't exist.

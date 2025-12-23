@@ -42,12 +42,10 @@ class BriefApplication(Adw.Application):
             website="https://github.com/shonebinu/Brief",
             issue_url="https://github.com/shonebinu/Brief/issues",
             license_type="GTK_LICENSE_GPL_3_0",
-            comments="Brief is a GTK application for browsing tldr-pages (community maintained command-line help pages).",
         )
 
         about.add_link("Donate with Ko-Fi", "https://ko-fi.com/shonebinu")
         about.add_link("Sponsor on Github", "https://github.com/sponsors/shonebinu")
-        about.add_link("tldr-pages Github", "https://github.com/tldr-pages/tldr")
 
         about.add_legal_section(
             "Data Source",
