@@ -87,9 +87,11 @@ class CommandPage(Adw.Bin):
 
         scrolled = Gtk.ScrolledWindow(hexpand=True)
 
+        formatted_code = self.format_command(code_text, cmd_arg_format)
+
         scrolled.set_child(
             Gtk.Label(
-                label=self.format_command(code_text, cmd_arg_format),
+                label=formatted_code,
                 xalign=0,
                 selectable=True,
                 wrap=False,
@@ -109,7 +111,7 @@ class CommandPage(Adw.Bin):
             margin_end=6,
         )
 
-        btn.connect("clicked", lambda b: self.copy_to_clipboard(code_text))
+        btn.connect("clicked", lambda b: self.copy_to_clipboard(formatted_code))
 
         box.append(scrolled)
         box.append(btn)
