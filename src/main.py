@@ -4,6 +4,7 @@ import gi
 
 from .preferences import BriefPreferencesWindow
 from .window import BriefWindow
+from .tldr import PageManager
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
@@ -18,6 +19,8 @@ class BriefApplication(Adw.Application):
             flags=Gio.ApplicationFlags.DEFAULT_FLAGS,
             resource_base_path="/io/github/shonebinu/Brief",
         )
+        self.manager = PageManager()
+
         self.create_action("quit", lambda *_: self.quit(), ["<control>q"])
         self.create_action("about", self.on_about_action)
         self.create_action("preferences", self.on_preferences_action)
@@ -56,7 +59,7 @@ class BriefApplication(Adw.Application):
         about.present(self.props.active_window)
 
     def on_preferences_action(self, widget, _):
-        pref_window = BriefPreferencesWindow()
+        pref_window = BriefPreferencesWindow(manager=self.manager)
         pref_window.present(self.props.active_window)
 
     def create_action(self, name, callback, shortcuts=None):

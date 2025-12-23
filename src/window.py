@@ -2,7 +2,6 @@ import gi
 
 from .renderer import CommandPage
 from .sidebar import BriefSidebar, CommandItem
-from .tldr import PageManager
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
@@ -22,7 +21,7 @@ class BriefWindow(Adw.ApplicationWindow):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.manager = PageManager()
+        self.manager = self.get_application().manager
         self.current_item = None
 
         self.sidebar = BriefSidebar(self.manager, self.toast_overlay)

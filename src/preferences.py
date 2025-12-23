@@ -1,5 +1,4 @@
 import gi
-from .tldr import PageManager
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
@@ -15,11 +14,11 @@ class BriefPreferencesWindow(Adw.PreferencesDialog):
     language_group = Gtk.Template.Child()
     format_row = Gtk.Template.Child()
 
-    def __init__(self, **kwargs):
+    def __init__(self, manager, **kwargs):
         super().__init__(**kwargs)
 
-        self.settings = Gio.Settings.new("io.github.shonebinu.Brief")
-        self.manager = PageManager()
+        self.manager = manager
+        self.settings = manager.settings
 
         self.setup_combo(
             self.format_row,
