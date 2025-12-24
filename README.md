@@ -6,6 +6,8 @@
 
 **Browse command-line cheatsheets**
 
+[![Flathub Downloads](https://img.shields.io/flathub/downloads/io.github.shonebinu.Brief?style=for-the-badge&logo=flathub)](https://flathub.org/apps/io.github.shonebinu.Brief)
+
 ![Brief app screenshot](./data/screenshots/brief.png)
 
 </div>
@@ -17,8 +19,9 @@ Brief is an app for browsing command-line cheatsheets written in Python, using G
 ## Features
 
 - Works completely offline.
-- Filter platform-specific commands (Linux, Windows, Android, etc.).
-- Browse commands in multiple languages.
+- Filter platform specific commands (Linux, Windows, Android, etc.).
+- View command help pages in multiple available languages.
+- Change the command argument format between long (`ls --all`) or short (`ls -a`).
 - Lets you update the cache within the app to download the latest data.
 
 ## Install
