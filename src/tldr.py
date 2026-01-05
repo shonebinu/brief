@@ -46,7 +46,9 @@ class PageManager:
             for lang in self.get_commands_map()
         ]
 
-        return sorted(languages, key=lambda x: x[0])
+        languages.sort()
+
+        return languages
 
     def get_available_platforms(self):
         pretty_names = {
@@ -68,7 +70,9 @@ class PageManager:
             for plat in self.get_commands_map().get("en", {})
         ]
 
-        return sorted(platforms, key=lambda x: x[0])
+        platforms.sort()
+
+        return platforms
 
     def get_all_commands(self):
         commands = defaultdict(lambda: defaultdict(list))

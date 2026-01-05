@@ -6,7 +6,7 @@ from functools import lru_cache
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 
-from gi.repository import Adw, Gio, GObject, Gtk, Pango, GLib
+from gi.repository import Adw, GObject, Gtk, GLib
 
 
 class CommandItem(GObject.Object):
