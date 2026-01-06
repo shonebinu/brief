@@ -13,6 +13,7 @@
     <p>Features:</p>
     <ul>
       <li>Works completely offline.</li>
+      <li>Fuzzy search through the available commands.</li>
       <li>Filter platform specific commands (Linux, Windows, Android, etc.).</li>
       <li>View command help pages in multiple available languages.</li>
       <li>Change the command argument format between long (`ls --all`) or short (`ls -a`).</li>
@@ -36,19 +37,31 @@
   detail -->
   <!-- URLs of this type should point to a webpage where users can submit or modify translations of
   the upstream project -->
-  <!-- <url type="translate">https://github.com/shonebinu/Brief</url>
-  <url type="faq">https://github.com/shonebinu/Brief</url> -->
+  <url type="translate">https://github.com/shonebinu/Brief/tree/main/po</url>
+  <!-- <url type="faq">https://github.com/shonebinu/Brief</url> -->
   <!-- Should provide a web link to an online user's reference, a software manual or help page -->
-  <!-- <url type="help">https://github.com/shonebinu/Brief</url> -->
+  <url type="help">https://github.com/shonebinu/Brief/issues</url>
   <!-- URLs of this type should point to a webpage showing information on how to donate to the
   described software project -->
-  <!-- <url type="donation">https://shonebinu.com</url> -->
+  <url type="donation">https://ko-fi.com/shonebinu</url>
   <!-- This could for example be an HTTPS URL to an online form or a page describing how to contact
   the developer -->
-  <!-- <url type="contact">https://shonebinu.com</url> -->
+  <url type="contact">https://shonebinu.com</url>
   <!-- URLs of this type should point to a webpage showing information on how to contribute to the
   described software project -->
-  <!-- <url type="contribute">https://github.com/shonebinu/Brief</url> -->
+  <url type="contribute">https://github.com/shonebinu/Brief</url>
+
+
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+    <control>touch</control>
+  </supports>
+
+  <requires>
+    <display_length compare="ge">360</display_length>
+  </requires>
+
 
   <translation type="gettext">brief</translation>
   <!-- All graphical applications having a desktop file must have this tag in the MetaInfo.
@@ -65,15 +78,44 @@
     <color type="primary" scheme_preference="dark">#146741</color>
   </branding>
 
+
   <screenshots>
     <screenshot type="default">
       <image>
-        https://raw.githubusercontent.com/shonebinu/Brief/refs/heads/main/data/screenshots/brief.png</image>
-      <caption>Brief app</caption>
+        https://raw.githubusercontent.com/shonebinu/Brief/refs/heads/main/data/screenshots/brief-command.png
+      </image>
+      <caption>Cheatsheet for the command ls</caption>
+    </screenshot>
+    <screenshot>
+      <image>
+        https://raw.githubusercontent.com/shonebinu/Brief/refs/heads/main/data/screenshots/brief-mid-update.png
+      </image>
+      <caption>App downloading the latest data</caption>
+    </screenshot>
+    <screenshot>
+      <image>
+        https://raw.githubusercontent.com/shonebinu/Brief/refs/heads/main/data/screenshots/brief-preferences.png
+      </image>
+      <caption>App preferences window</caption>
+    </screenshot>
+    <screenshot>
+      <image>
+        https://raw.githubusercontent.com/shonebinu/Brief/refs/heads/main/data/screenshots/brief-small-screen.png
+      </image>
+      <caption>Mobile view of the app</caption>
     </screenshot>
   </screenshots>
 
   <releases>
+    <release version="0.3.0" date="2026-01-06">
+      <description translate="no">
+        <p>Release 0.3.0</p>
+        <ul>
+          <li>Implement fuzzy search for command search</li>
+          <li>Improve initial app launch speed</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.2.0" date="2025-12-25">
       <description translate="no">
         <p>Release 0.2.0</p>

@@ -21,7 +21,7 @@ Brief is an app for browsing command-line cheatsheets written in Python, using G
 ## Features
 
 - Works completely offline.
-- Fuzzy search the available commands.
+- Fuzzy search through the available commands.
 - Filter platform specific commands (Linux, Windows, Android, etc.).
 - View command help pages in multiple available languages.
 - Change the command argument format between long (`ls --all`) or short (`ls -a`).
