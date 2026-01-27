@@ -6,5 +6,22 @@
     <file preprocess="xml-stripblanks">renderer.ui</file>
     <file preprocess="xml-stripblanks">shortcuts-dialog.ui</file>
     <file preprocess="xml-stripblanks">preferences.ui</file>
+
+
+    <file preprocess="xml-stripblanks"
+    >icons/edit-copy-symbolic.svg</file>
+
+    <file preprocess="xml-stripblanks"
+    >icons/system-search-symbolic.svg</file>
+
+    <file preprocess="xml-stripblanks"
+    >icons/language-symbolic.svg</file>
+
+    <file preprocess="xml-stripblanks"
+    >icons/open-menu-symbolic.svg</file>
+
+
+    <file preprocess="xml-stripblanks"
+    >icons/computer-symbolic.svg</file>
   </gresource>
 </gresources>
